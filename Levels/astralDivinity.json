@@ -1,0 +1,12 @@
+{
+    "id": "astralDivinity",
+    "name": "Astral Divinity",
+    "description": "NDagger - Effects & Style\n The Sun XIX - Gameplay & Balancing\n\n After a year of rest and practice I touched .lua and I hope I'll never have to touch it again, bye",
+    "author": "NDagger & The Sun XIX",
+    "menuPriority": 10,
+    "selectable": true,
+    "styleId": "astralDivinity",
+    "musicId": "ratRiver",
+    "luaFile": "Scripts/Levels/astralDivinity.lua",
+    "difficultyMults": []
+}

@@ -1,0 +1,27 @@
+{
+    "id": "astralDivinity",
+
+    "hue_min": 0,
+    "hue_max": 360,
+    "hue_ping_pong": false,
+    "hue_increment": 0.7,
+    "max_swap_time": 0,
+
+    "pulse_min": 0.0,
+    "pulse_max": 1.5,
+    "pulse_increment": 0.05,
+
+    "3D_pulse_speed": 0,
+    "3D_depth": 20,
+    "3D_skew": 0,
+    "3D_spacing": 1,
+
+    "main": { "main": true, "dynamic": false, "value": [255, 255, 0, 255], "pulse": [0, 0, 0, 0] },
+    "cap_color": "main",
+    "text_color": {"value": [255, 255, 55, 255], "pulse": [0, 0, 0, 0] },
+
+    "colors":
+    [
+        { "dynamic": false, "dynamic_offset": false, "dynamic_darkness": 2.7, "value": [0, 0, 0, 255], "pulse": [0, 0, 0, 0]}
+    ]
+}
