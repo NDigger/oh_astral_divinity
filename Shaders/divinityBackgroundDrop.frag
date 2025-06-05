@@ -19,14 +19,14 @@ void main() {
     vec2 uv = gl_FragCoord.xy / u_resolution;
     vec3 col = vec3(1.0);
 
-    const int COUNT_X = 2;
-    const int COUNT_Y = 2;
+    const int COUNT_X = 4;
+    const int COUNT_Y = 4;
 
     for (int y = 0; y < COUNT_Y; y++) {
         for (int x = 0; x < COUNT_X; x++) {
             vec2 grid = vec2(float(x), float(y));
             vec2 pos = grid / vec2(float(COUNT_X), float(COUNT_Y));
-            float t = u_time * 8.0 + hash(grid) * 10.0;
+            float t = u_time * 0.4 + hash(grid) * 10.0;
             pos.x += mod(t, 3.0) - 1.5;
             float r = 0.32 + 0.05 * hash(grid + 1.3);
             float circle = softCircle(uv, pos, r) * 0.2;

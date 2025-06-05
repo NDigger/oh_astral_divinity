@@ -21,8 +21,8 @@
 
     "colors":
     [
-        { "dynamic": false, "dynamic_offset": false, "dynamic_darkness": 2.7, "value": [255, 255, 245, 255], "pulse": [0, 0, 0, 0]},
-        { "dynamic": false, "dynamic_offset": false, "dynamic_darkness": 2.7, "value": [255, 245, 255, 255], "pulse": [0, 0, 0, 0]},
-        { "dynamic": false, "dynamic_offset": false, "dynamic_darkness": 2.7, "value": [245, 255, 255, 255], "pulse": [0, 0, 0, 0]}
+        { "dynamic": false, "dynamic_offset": false, "dynamic_darkness": 2.7, "value": [245, 245, 255, 255], "pulse": [0, 0, 0, 0]},
+        { "dynamic": false, "dynamic_offset": false, "dynamic_darkness": 2.7, "value": [240, 240, 255, 255], "pulse": [0, 0, 0, 0]},
+        { "dynamic": false, "dynamic_offset": false, "dynamic_darkness": 2.7, "value": [250, 250, 255, 255], "pulse": [0, 0, 0, 0]}
     ]
 }

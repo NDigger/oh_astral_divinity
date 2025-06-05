@@ -7,10 +7,7 @@ u_execScript("astralDivinityCustomWalls.lua")
 
 THICKNESS = 60 -- I find this fitting but it can be edited of course. I'd not recommend making it smaller than 40
 function addPattern(mKey) -- Insert your fun here
-    if mKey == 0 then pTunnelExtendedPD(2, 35, 15)
-    elseif mKey == 1 then pLRBarrage(math.random(1, 2), 6, 5)
-    elseif mKey == 2 then pInverseBarrageExtendedPD(math.random(0, 1), 8, 5)
-    elseif mKey == 3 then pRandomBarrageLR(math.random(1, 2), 5, 5)
+    if mKey == 0 then pLRBarrage(math.random(1, 2), 6, 5)
     end
 end
 
@@ -34,19 +31,30 @@ function onLoad()
     -- Symbols 1 
     e_waitUntilS(offset + 3.68);e_eval([[
         createSymbol(4, 0, 280)
-        l_setSpeedMult(0)
+        l_setSpeedMult(1)
         u_setFlashColor(255, 255, 255)
     ]])
     e_waitUntilS(offset + 3.96);e_eval([[
         createSymbol(0, 200, 280)
         createSymbol(2, -200, 280)
+        applyToSymbol(2, function(cw) cw.x:run(cw.x.value - 100, cw.x.value, 25, easing.easeOut) end)
+        applyToSymbol(3, function(cw) cw.x:run(cw.x.value + 100, cw.x.value, 25, easing.easeOut) end)
     ]])
     e_waitUntilS(offset + 4.09);e_eval([[
         createSymbol(7, 400, 280)
         createSymbol(7, -400, 280)
+        applyToSymbol(4, function(cw) cw.x:run(cw.x.value - 200, cw.x.value, 25, easing.easeOut) end)
+        applyToSymbol(5, function(cw) cw.x:run(cw.x.value + 200, cw.x.value, 25, easing.easeOut) end)
         l_setSpeedMult(2)
     ]])
-    e_waitUntilS(offset + 8);e_eval('applyToAllSymbols(function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 30, easing.backIn) end)')
+    e_waitUntilS(offset + 4.23);e_eval([[
+        rotatePlayerWalls(math.ceil(customWall.player[1].rotation.value / math.pi / l_getSides()) * math.pi / l_getSides() - math.pi, 30, easing.backOut)
+    ]])
+    e_waitUntilS(offset + 7.9);e_eval('applyToSymbol(4, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 50, easing.backIn) end)')
+    e_waitUntilS(offset + 7.96);e_eval('applyToSymbol(2, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 50, easing.backIn) end)')
+    e_waitUntilS(offset + 8.02);e_eval('applyToSymbol(1, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 50, easing.backIn) end)')
+    e_waitUntilS(offset + 8.08);e_eval('applyToSymbol(3, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 50, easing.backIn) end)')
+    e_waitUntilS(offset + 8.14);e_eval('applyToSymbol(5, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 50, easing.backIn) end)')
 
     -- Second Part (Drop)
     e_waitUntilS(offset + 8.57);e_eval([[ 
@@ -74,14 +82,14 @@ function onLoad()
     e_waitUntilS(offset + 12.32);e_eval('createSymbol(5, 470, -330)')
     e_waitUntilS(offset + 12.45);e_eval([[
         createSymbol(4, 620, -330)
-        applyToSymbol(3, function(cw) cw.x:run(cw.x.value, cw.x.value + 500, 30, easing.backIn) end) 
+        applyToSymbol(3, function(cw) cw.x:run(cw.x.value, cw.x.value + 500, 60, easing.backIn) end) 
     ]])
     e_waitUntilS(offset + 12.54);e_eval([[
-        applyToSymbol(2, function(cw) cw.x:run(cw.x.value, cw.x.value + 500, 30, easing.backIn) end)
+        applyToSymbol(2, function(cw) cw.x:run(cw.x.value, cw.x.value + 500, 60, easing.backIn) end)
         removePentagonDecorationPart()
     ]])
     e_waitUntilS(offset + 12.63);e_eval([[
-        applyToSymbol(1, function(cw) cw.x:run(cw.x.value, cw.x.value + 500, 30, easing.backIn) end)
+        applyToSymbol(1, function(cw) cw.x:run(cw.x.value, cw.x.value + 500, 60, easing.backIn) end)
         removePentagonDecorationPart()
     ]])
     -- Symbols 2
@@ -93,9 +101,9 @@ function onLoad()
     e_waitUntilS(offset + 21.1);e_eval([[
         createSymbol(9, -320, 250)
     ]])
-    e_waitUntilS(offset + 21.15);e_eval('applyToSymbol(3, function(cw) cw.x:run(cw.x.value, cw.x.value - 500, 30, easing.backIn) end)')
-    e_waitUntilS(offset + 21.24);e_eval('applyToSymbol(2, function(cw) cw.x:run(cw.x.value, cw.x.value - 500, 30, easing.backIn) end)')
-    e_waitUntilS(offset + 21.33);e_eval('applyToSymbol(1, function(cw) cw.x:run(cw.x.value, cw.x.value - 500, 30, easing.backIn) end)')
+    e_waitUntilS(offset + 21.15);e_eval('applyToSymbol(3, function(cw) cw.x:run(cw.x.value, cw.x.value - 500, 60, easing.backIn) end)')
+    e_waitUntilS(offset + 21.24);e_eval('applyToSymbol(2, function(cw) cw.x:run(cw.x.value, cw.x.value - 500, 60, easing.backIn) end)')
+    e_waitUntilS(offset + 21.33);e_eval('applyToSymbol(1, function(cw) cw.x:run(cw.x.value, cw.x.value - 500, 60, easing.backIn) end)')
 
     -- Symbols 3
     e_waitUntilS(offset + 25.19);e_eval([[
@@ -104,72 +112,65 @@ function onLoad()
     ]])
     e_waitUntilS(offset + 25.34);e_eval('createSymbol(3, 100, 250)')
 
-    e_waitUntilS(offset + 25.55);e_eval('applyToSymbol(2, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 30, easing.backIn) end)')
-    e_waitUntilS(offset + 25.65);e_eval('applyToSymbol(1, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 30, easing.backIn) end)')
+    e_waitUntilS(offset + 25.55);e_eval('applyToSymbol(2, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 60, easing.backIn) end)')
+    e_waitUntilS(offset + 25.65);e_eval('applyToSymbol(1, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 60, easing.backIn) end)')
 
     -- Third Part
     e_waitUntilS(offset + 25.93);e_eval([[
         l_setSides(5)
         u_setFlashEffect(255)
         shdr_resetActiveFragmentShader(0)
-        setMainColor(195, 210, 245, 255)
-        setCustomWallColorVariance(0, 20, 10, 0)
+        setMainColor(205, 220, 245, 255)
+        setCustomWallColorVariance(0, 10, 0, 0)
         applyMainColor()
-        for i = 0, 30 do
-            createPentagonDecoration(math.random(80, 120), i * 150 - 2500 + math.random(-10, 10), 490 + i * 2, whiteColor)
-            createPentagonDecoration(math.random(80, 120), i * 150 - 2500 + math.random(-10, 10), -490 - i * 2, whiteColor)
-        end
-        for i = 0, 10 do
-            createPentagonDecoration(20 + i % 2 * 15, -500, i * 78 - 390, whiteColor)
-            createPentagonDecoration(20 + i % 2 * 15, 500, i * 78 - 390, whiteColor)
 
-            createPentagonDecoration(50 + i % 2 * 35, -700, i * 78 - 390, whiteColor)
-            createPentagonDecoration(50 + i % 2 * 35, 700, i * 78 - 390, whiteColor)
+        for i = 0, 34 do
+            createPentagonDecoration(170 + i % 2 * 55, math.sin(i/4) * 880, math.cos(i/4) * 630, whiteColor, math.random(50, 150)/100) 
         end
     ]])
 
     e_waitUntilS(offset + 43.24);e_eval([[
         deleteSymbols()
-        removePentagonDecorations()
-        createSymbol(1, -470, -250)
-        createSymbol(1, -620, -250)
-        applyToSymbol(1, function(cw) cw.y:run(cw.y.value + 100, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value + 130, cw.x.value, 60, easing.backOut) end)
-        applyToSymbol(2, function(cw) cw.y:run(cw.y.value - 100, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value - 160, cw.x.value, 60, easing.backOut) end)
+        createSymbol(1, -370, -250)
+        createSymbol(1, -520, -250)
+        applyToSymbol(1, function(cw) cw.y:run(cw.y.value + 100, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value + 130, cw.x.value, 130, easing.backOut) end)
+        applyToSymbol(2, function(cw) cw.y:run(cw.y.value - 100, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value - 160, cw.x.value, 130, easing.backOut) end)
     ]]) 
     e_waitUntilS(offset + 43.51);e_eval([[
-        createSymbol(2, -470, 0)
-        createSymbol(9, -620, 0)
-        applyToSymbol(3, function(cw) cw.y:run(cw.y.value - 20, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value + 70, cw.x.value, 60, easing.backOut) end)
-        applyToSymbol(4, function(cw) cw.y:run(cw.y.value - 140, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value - 160, cw.x.value, 60, easing.backOut) end)
+        createSymbol(2, -370, 0)
+        createSymbol(9, -520, 0)
+        applyToSymbol(3, function(cw) cw.y:run(cw.y.value - 20, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value + 70, cw.x.value, 130, easing.backOut) end)
+        applyToSymbol(4, function(cw) cw.y:run(cw.y.value - 140, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value - 160, cw.x.value, 130, easing.backOut) end)
     ]]) 
     e_waitUntilS(offset + 43.74);e_eval([[
-        createSymbol(3, -470, 250)
-        createSymbol(6, -620, 250)
-        applyToSymbol(5, function(cw) cw.y:run(cw.y.value - 170, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value + 30, cw.x.value, 60, easing.backOut) end)
-        applyToSymbol(6, function(cw) cw.y:run(cw.y.value - 90, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value - 170, cw.x.value, 60, easing.backOut) end)
+        createSymbol(3, -370, 250)
+        createSymbol(6, -520, 250)
+        applyToSymbol(5, function(cw) cw.y:run(cw.y.value - 170, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value + 30, cw.x.value, 130, easing.backOut) end)
+        applyToSymbol(6, function(cw) cw.y:run(cw.y.value - 130, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value - 170, cw.x.value, 130, easing.backOut) end)
     ]]) 
     e_waitUntilS(offset + 43.96);e_eval([[
-        createSymbol(4, 470, -250)
-        createSymbol(0, 620, -250)
-        applyToSymbol(7, function(cw) cw.y:run(cw.y.value + 100, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value + 30, cw.x.value, 60, easing.backOut) end)
-        applyToSymbol(8, function(cw) cw.y:run(cw.y.value - 90, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value - 250, cw.x.value, 60, easing.backOut) end)
+        createSymbol(4, 370, -250)
+        createSymbol(0, 520, -250)
+        applyToSymbol(7, function(cw) cw.y:run(cw.y.value + 100, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value + 60, cw.x.value, 130, easing.backOut) end)
+        applyToSymbol(8, function(cw) cw.y:run(cw.y.value - 130, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value - 250, cw.x.value, 130, easing.backOut) end)
     ]]) 
     e_waitUntilS(offset + 44.28);e_eval([[
-        createSymbol(5, 470, 0)
-        createSymbol(10, 620, 0)
-        applyToSymbol(9, function(cw) cw.y:run(cw.y.value + 120, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value + 175, cw.x.value, 60, easing.backOut) end)
-        applyToSymbol(10, function(cw) cw.y:run(cw.y.value - 10, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value - 15, cw.x.value, 60, easing.backOut) end)
+        createSymbol(5, 370, 0)
+        createSymbol(10, 520, 0)
+        applyToSymbol(9, function(cw) cw.y:run(cw.y.value + 120, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value + 175, cw.x.value, 130, easing.backOut) end)
+        applyToSymbol(10, function(cw) cw.y:run(cw.y.value - 10, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value - 15, cw.x.value, 130, easing.backOut) end)
     ]]) 
     e_waitUntilS(offset + 44.57);e_eval([[
-        createSymbol(7, 470, 250)
-        createSymbol(8, 620, 250)
-        applyToSymbol(11, function(cw) cw.y:run(cw.y.value + 130, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value - 20, cw.x.value, 60, easing.backOut) end)
-        applyToSymbol(12, function(cw) cw.y:run(cw.y.value - 30, cw.y.value, 30, easing.backOut); cw.x:run(cw.x.value + 80, cw.x.value, 60, easing.backOut) end)
+        createSymbol(7, 370, 250)
+        createSymbol(8, 520, 250)
+        applyToSymbol(11, function(cw) cw.y:run(cw.y.value + 130, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value - 20, cw.x.value, 130, easing.backOut) end)
+        applyToSymbol(12, function(cw) cw.y:run(cw.y.value - 60, cw.y.value, 60, easing.backOut); cw.x:run(cw.x.value + 80, cw.x.value, 130, easing.backOut) end)
     ]]) 
-    e_waitUntilS(offset + 44.85);e_eval([[applyToAllSymbols(function(cw) cw.y:run(cw.y.value, cw.y.value + math.random(-2000, 2000), 40, easing.backIn); cw.x:run(cw.x.value, cw.x.value + math.random(-3000, 3000), 70, easing.backIn) end)]])
+    e_waitUntilS(offset + 44.85);e_eval([[applyToAllSymbols(function(cw) cw.y:run(cw.y.value, cw.y.value + math.random(-2000, 2000), 150, easing.backIn); cw.x:run(cw.x.value, cw.x.value + math.random(-3000, 3000), 150, easing.backIn) end)]])
 
     -- Fourth Part
     e_waitUntilS(offset + 45.47);e_eval([[
+        removePentagonDecorations()
         shdr_setActiveFragmentShader(0, backgroundShaderFourthPart)
         pulsingLineWalls(150, 0)
         deleteSymbols()
@@ -178,8 +179,8 @@ function onLoad()
         l_setSides(8)
         setMainColor(225, 200, 205, 255)
         setCustomWallColorVariance(30, 10, 10, 0)
-        pulse.skew:run(0, 0.2, 100, easing.backOut)
-        pulse.rotationSpeed:run(-2, 0, 100, easing.backOut)  
+        skew:run(0, 0.2, 100, easing.backOut)
+        rotationSpeed:run(-2, 0, 100, easing.backOut)  
         applyMainColor()
         for i = 1, 50 do createRotatingCircle(4, 700, 300, math.random(0, 314)) end
         for i = 1, 20 do createRotatingCircle(1, 300, 50, i / 10, 3) end
@@ -200,11 +201,9 @@ function onLoad()
             createPentagonDecoration(100, 750, i * 140 - 500, mainColor, math.pi)
         end
     ]])
-
-    -- Fifth Part
     e_waitUntilS(offset + 62);e_eval([[
-        pulse.skew:run(0, 0.3, 60, easing.backIn)
-        pulse.alpha3d:run(50, 5, 60, easing.easeOut)
+        skew:run(0, 0.3, 60, easing.backIn)
+        alpha3d:run(50, 5, 60, easing.easeOut)
         s_setStyle("astralDivinityFifthPart")
     ]])
     e_waitUntilS(offset + 62.30);e_eval([[
@@ -213,9 +212,11 @@ function onLoad()
     ]])
     e_waitUntilS(offset + 62.50);e_eval([[
         createSymbol(2, 80, 250)
-        applyToSymbol(1, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 35, easing.backIn) end)
+        applyToSymbol(1, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 75, easing.backIn) end)
     ]])
-    e_waitUntilS(offset + 62.60);e_eval('applyToSymbol(2, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 35, easing.backIn) end)')
+    e_waitUntilS(offset + 62.60);e_eval('applyToSymbol(2, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 75, easing.backIn) end)')
+    
+    -- Fifth Part
     e_waitUntilS(offset + 63);e_eval([[
         removePentagonDecorations()
         deleteBasicWalls()
@@ -227,30 +228,59 @@ function onLoad()
         setCustomWallColorVariance(10, 10, 10, 0)
         applyMainColor()
         e_eval('l_setSides(5)')
+        for i = 1, 6 do 
+            createRotatingCircle(5, 250, 50, i/6*math.pi*2, 4, math.random(3, 10))
+            fakePlayerArrow(250, i/6*math.pi*2, 4, 70, 0.2, 9)
+        end
+        for i = 1, 9 do 
+            createRotatingCircle(3, 450, 40, i/9*math.pi*2, 3, math.random(3, 10)) 
+            fakePlayerArrow(450, i/9*math.pi*2, 3, 60, 0.16, 7.5)
+        end
+        for i = 1, 12 do 
+            createRotatingCircle(1, 600, 30, i/12*math.pi*2, 2, math.random(3, 10)) 
+            fakePlayerArrow(600, i/12*math.pi*2, 2, 50, 0.12, 6)
+        end
+        for i = 1, 15 do 
+            createRotatingCircle(1, 730, 20, i/15*math.pi*2, 1, math.random(3, 10))
+            fakePlayerArrow(730, i/15*math.pi*2, 1, 40, 0.08, 4.5) 
+        end
+        for i = 1, 18 do 
+            createRotatingCircle(2, 800, 20, i/18*math.pi*2, 0, math.random(3, 10)) 
+            fakePlayerArrow(800, i/18*math.pi*2, 0, 30, 0.08, 4.5)
+        end
+        for i = 1, 21 do 
+            createRotatingCircle(3, 850, 20, i/21*math.pi*2, -0.5, math.random(3, 10))
+            fakePlayerArrow(850, i/21*math.pi*2, -0.5, 30, 0.12, 6) 
+        end
     ]])
     e_waitUntilS(offset + 63.01);e_eval('l_setSides(4)')
 
     -- END
     e_waitUntilS(offset + 80.09); e_eval([[
-        pulse.shaderTimeMult:run(1, 0, 300)
-        pulse.spacing3d:run(s_get3dSpacing(), 0, 260)
-        pulse.rotationSpeed:run(1, 0, 100)
-        pulse.minRadius:run(l_getRadiusMin(), 300, 260, easing.backIn)
+        shaderTimeMult:run(1, 0, 300)
+        spacing3d:run(s_get3dSpacing(), 0, 260)
+        rotationSpeed:run(1, 0, 100)
+        minRadius:run(l_getRadiusMin(), 300, 260, easing.backIn)
     ]])
     e_waitUntilS(offset + 81.69); e_eval([[
-        pulse.rotationSpeed:run(0, 1, 260)
     ]])
-    e_waitUntilS(offset + 82.1); e_eval('pulse.speed:run(l_getSpeedMult(), 0 , 180)')
+    e_waitUntilS(offset + 82.1); e_eval('speed:run(l_getSpeedMult(), 0 , 180)')
     e_waitUntilS(offset + levelCompletionTime);e_eval([[
         cw_clear()
         shdr_resetActiveFragmentShader(2)
+        shdr_setActiveFragmentShader(1, transparentShader)
+        shdr_setActiveFragmentShader(2, transparentShader)
+        shdr_setActiveFragmentShader(3, transparentShader)
+        shdr_setActiveFragmentShader(4, transparentShader)
+        shdr_setActiveFragmentShader(5, transparentShader)
+        shdr_setActiveFragmentShader(6, transparentShader)
         l_overrideScore('levelCompletedMsg')
-        l_setSides(4)
+        s_setStyle("astralDivinityEnd")
         e_kill()
-    ]]) -- why before death I set 4 sides but amount is still 5
+    ]])
 end
 
-levelCompletedMsg = 'LEVEL COMPLETED'
+levelCompletedMsg = '\n\n\n\n\n           ASTRAL DIVINITY\n                               HARD\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
 levelFailMsg = 'LEVEL FAILED'
 overrideScore = 0
 percent = 0
@@ -260,37 +290,47 @@ function onDeath()
     if l_getLevelTime() > 80.09 and l_getLevelTime() < levelCompletionTime - 0.02 then l_overrideScore("levelFailMsg") end
 end
 
-function applyValuesFromScript()
-    addPlayerRadius = pulse.additionalPlayerRadius.value
-    playerWidthMult = pulse.playerWidthMult.value
-    playerHeightMult = pulse.playerHeightMult.value
-    wallLeftSkew = pulse.wallLeftSkew.value
-    wallRightSkew = pulse.wallRightSkew.value
-    wallLeftAngle = pulse.wallLeftAngle.value
-    wallRightAngle = pulse.wallRightAngle.value
-end
+-- Here we go
+minRadius = interpolation:new(l_setRadiusMin)
+rotationSpeed = interpolation:new(l_setRotationSpeed)
+bgTileOffset = interpolation:new(s_setBGRotationOffset)
+scoreFloatingNumbers = interpolation:new()
+skew = interpolation:new(s_set3dSkew)
+spacing3d = interpolation:new(s_set3dSpacing)
+alpha3d = interpolation:new(s_set3dAlphaMult)
+speed = interpolation:new(l_setSpeedMult)
+additionalPlayerRadius = interpolation:new()
+playerWidthMult = interpolation:new()
+playerHeightMult = interpolation:new()
+shaderTimeMult = interpolation:new()
+wallLeftSkew = interpolation:new()
+wallRightSkew = interpolation:new()
+wallLeftAngle = interpolation:new()
+wallRightAngle = interpolation:new()
+shaderBorderPulse = interpolation:new()
+shaderGridSize = interpolation:new()
+shaderColorVariance = interpolation:new()
 
-addPlayerRadius = -5
-playerWidthMult = 0
-playerHeightMult = 0
+-- Values preset (for objects that don't use setters)
+shaderGridSize.value = 20
+shaderColorVariance.value = 0.1
+playerWidthMult.value = 1
+playerHeightMult.value = 1
+additionalPlayerRadius.value = -5
+shaderTimeMult.value = 1
+
 pulseTime = 0
 pulseTimePulse = 30
 
-wallLeftSkew = 0
-wallRightSkew = 0
-wallLeftAngle = 0
-wallRightAngle = 0
-
 function onUpdate(mFrameTime)
-    for _, fn in pairs(pulse) do fn:update(mFrameTime) end
-    overrideScore = simplifyFloat(l_getLevelTime(), simplifyFloat(pulse.scoreFloatingNumbers.value, 0))
+    for _, instance in pairs(interpolation.instances) do instance:update(mFrameTime) end
+    overrideScore = simplifyFloat(l_getLevelTime(), simplifyFloat(scoreFloatingNumbers.value, 0))
     percent = tostring(simplifyFloat(
-        l_getLevelTime() / levelCompletionTime * 100,
-        simplifyFloat(pulse.scoreFloatingNumbers.value, 0)
+        l_getLevelTime() / levelCompletionTime * 100, 
+        simplifyFloat(scoreFloatingNumbers.value, 0)
     )) .. "%"
     pulseTime = pulseTime - mFrameTime
     if pulseTime > 0 then s_setPulseMin(-2) else s_setPulseMin(1) end
-    applyValuesFromScript()
     updateCustomWalls(mFrameTime)
 end
 
@@ -346,7 +386,7 @@ end
 shaderTime = 0 -- It pulses when I ask it to do so. Quite useful.
 function onRenderStage(mFrameTime)
     local r, g, b, a = mainColor.r.value / 255, mainColor.g.value / 255, mainColor.b.value / 255, mainColor.a.value / 255
-    shaderTime = shaderTime + mFrameTime * pulse.shaderTimeMult.value / 1000
+    shaderTime = shaderTime + mFrameTime * shaderTimeMult.value / 1000
     shdr_setUniformFVec2(backgroundShader, "u_resolution", u_getWidth(), u_getHeight())
     shdr_setUniformF(backgroundShader, "u_time", shaderTime)
     shdr_setUniformFVec4(backgroundShader, "color", r, g, b, a) 
@@ -357,14 +397,14 @@ function onRenderStage(mFrameTime)
 
     shdr_setUniformFVec2(backgroundShaderLastPart, "u_resolution", u_getWidth(), u_getHeight())
     shdr_setUniformF(backgroundShaderLastPart, "u_time", shaderTime)
-    shdr_setUniformF(backgroundShaderLastPart, "borderPulse", pulse.shaderBorderPulse.value)
+    shdr_setUniformF(backgroundShaderLastPart, "borderPulse", shaderBorderPulse.value)
     shdr_setUniformFVec4(backgroundShaderLastPart, "color", r, g, b, a) 
 
     shdr_setUniformFVec2(backgroundShaderFourthPart, "u_resolution", u_getWidth(), u_getHeight())
     shdr_setUniformF(backgroundShaderFourthPart, "u_time", shaderTime)
     shdr_setUniformFVec4(backgroundShaderFourthPart, "color", r, g, b, a) 
-    shdr_setUniformF(backgroundShaderFourthPart, "gridSize", pulse.shaderGridSize.value) 
-    shdr_setUniformF(backgroundShaderFourthPart, "colorVariance", pulse.shaderColorVariance.value)
+    shdr_setUniformF(backgroundShaderFourthPart, "gridSize", shaderGridSize.value) 
+    shdr_setUniformF(backgroundShaderFourthPart, "colorVariance", shaderColorVariance.value)
 end
 
 function onStep()

@@ -21,7 +21,7 @@ void main() {
 	
     float xVal = abs(uv.x) + 0.001;
     float yVal = abs(uv.y) + 0.01;
-    float xGrid = step(mod(pow(xVal, -0.1) * gridSize - u_time / 20.0, 0.1), 0.003);
-    float yGrid = step(mod(yVal / xVal * gridSize - u_time / 6.0, 1.0), 0.01);
+    float xGrid = step(mod(pow(xVal, -0.1) * gridSize - u_time / 40.0, 0.1), 0.003);
+    float yGrid = step(mod(yVal / xVal * gridSize - u_time / 12.0, 1.0), 0.01);
     gl_FragColor = vec4(vec3(xGrid + yGrid) * color.rgb, fade);
 }

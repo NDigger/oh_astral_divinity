@@ -11,6 +11,7 @@ function updateCustomWalls(mFrameTime)
     updatePentagonDecoration(mFrameTime)
     updatePulseWalls(mFrameTime)
     updateParticles(mFrameTime)
+    updateFakePlayerArrows(mFrameTime)
 end
 
 mainColor = { r = interpolation:new(), g = interpolation:new(), b = interpolation:new(), a = interpolation:new() }
@@ -77,6 +78,7 @@ customWall = {
     rotatingCircle = {},
     pulse = {},
     particle = {},
+    fakePlayerArrows = {},
 }
 
 -- Used for interpolation color pulses
@@ -145,8 +147,8 @@ end
 
 function updateBasicWall(mFrameTime)
     function setPosition(cw)
-        cw_setVertexPos(cw.id, 0, (cw.distance + cw.THICKNESS + wallLeftSkew) * math.cos(cw.firstAngle + wallLeftAngle), (cw.distance + cw.THICKNESS + wallLeftSkew) * math.sin(cw.firstAngle + wallLeftAngle))
-        cw_setVertexPos(cw.id, 1, (cw.distance + cw.THICKNESS + wallRightSkew) * math.cos(cw.secondAngle + wallRightAngle), (cw.distance + cw.THICKNESS + wallRightSkew) * math.sin(cw.secondAngle + wallRightAngle))
+        cw_setVertexPos(cw.id, 0, (cw.distance + cw.THICKNESS + wallLeftSkew.value) * math.cos(cw.firstAngle + wallLeftAngle.value), (cw.distance + cw.THICKNESS + wallLeftSkew.value) * math.sin(cw.firstAngle + wallLeftAngle.value))
+        cw_setVertexPos(cw.id, 1, (cw.distance + cw.THICKNESS + wallRightSkew.value) * math.cos(cw.secondAngle + wallRightAngle.value), (cw.distance + cw.THICKNESS + wallRightSkew.value) * math.sin(cw.secondAngle + wallRightAngle.value))
         cw_setVertexPos(cw.id, 2, cw.distance * math.cos(cw.secondAngle), cw.distance * math.sin(cw.secondAngle))
         cw_setVertexPos(cw.id, 3, cw.distance * math.cos(cw.firstAngle), cw.distance * math.sin(cw.firstAngle))
     end
@@ -188,18 +190,22 @@ pulsingLineWallProp = {
     margin = 2,
 }
 
-function pulsingLineWalls(amount, y)
-    local halfSpace = (amount * (pulsingLineWallProp.width + pulsingLineWallProp.margin)) / 2
-    for i = 1, amount do pulsingLineWall(-halfSpace + (i * (pulsingLineWallProp.width + pulsingLineWallProp.margin)), y) end
+function pulsingLineWalls(amount, y, x, minHeight, maxHeight, width)
+    local halfSpace = (amount * ((width or pulsingLineWallProp.width) + pulsingLineWallProp.margin)) / 2
+    for i = 1, amount do pulsingLineWall(-halfSpace + (i * ((width or pulsingLineWallProp.width) + pulsingLineWallProp.margin)) + (x or 0), y, minHeight, maxHeight, width) end
 end
 
-function pulsingLineWall(x, y)
+function pulsingLineWall(x, y, minHeight, maxHeight, width)
+    if not minHeight or not maxHeight then
+        minHeight = pulsingLineWallProp.minHeight
+        maxHeight = pulsingLineWallProp.maxHeight
+    end
     local cw = {
         id = cw_createNoCollision(),
         color = getColorWithVariance(clone(mainColor)),
         time = math.pi / 2 * 0.9,
-        height = math.random(pulsingLineWallProp.minHeight, pulsingLineWallProp.maxHeight),
-        width = pulsingLineWallProp.width,
+        height = math.random(minHeight, maxHeight),
+        width = width or pulsingLineWallProp.width,
         x = x, y = y,
     }
     table.insert(customWall.pulseLine, cw)
@@ -209,10 +215,10 @@ function updatePulseLineWall(mFrameTime)
     for i = #customWall.pulseLine, 1, -1 do
         local cw = customWall.pulseLine[i]
         cw.time = cw.time + mFrameTime / 10
-        cw_setVertexPos(cw.id, 0, getAbsolutePosition(cw.x, cw.y + -cw.height * math.sin(cw.time)))
-        cw_setVertexPos(cw.id, 1, getAbsolutePosition(cw.x + cw.width, cw.y + -cw.height * math.sin(cw.time)))
-        cw_setVertexPos(cw.id, 2, getAbsolutePosition(cw.x + cw.width, cw.y + cw.height * math.sin(cw.time)))
-        cw_setVertexPos(cw.id, 3, getAbsolutePosition(cw.x, cw.y + cw.height * math.sin(cw.time)))
+        cw_setVertexPos(cw.id, 0, getAbsolutePosition(cw.x, cw.y * (s_get3dSkew() + 1) + -cw.height * math.sin(cw.time)))
+        cw_setVertexPos(cw.id, 1, getAbsolutePosition(cw.x + cw.width, cw.y * (s_get3dSkew() + 1) + -cw.height * math.sin(cw.time)))
+        cw_setVertexPos(cw.id, 2, getAbsolutePosition(cw.x + cw.width, cw.y * (s_get3dSkew() + 1) + cw.height * math.sin(cw.time)))
+        cw_setVertexPos(cw.id, 3, getAbsolutePosition(cw.x, cw.y * (s_get3dSkew() + 1) + cw.height * math.sin(cw.time)))
         if cw.time > math.pi then
             cw_destroy(cw.id)
             table.remove(customWall.pulseLine, i)
@@ -317,16 +323,21 @@ end
 -- PLAYER WALLS
 --------------------------------------
 
+playerWallsDistance = interpolation:new()
+playerWallsDistance.value = 0
 function playerWall(side)
     local sides = l_getSides()
     local cw = {
         id = cw_createNoCollision(),
-        distance = 0,
         firstAngle = side * math.pi / (sides / 2) + math.pi / sides,
         secondAngle = nil,
         sides = sides,
+        rotation = interpolation:new(),
         THICKNESS = l_getRadiusMin(),
-        color = getColorWithVariance(clone(mainColor))
+        color = getColorWithVariance(clone(mainColor)),
+
+        side = side,
+        sides = sides
     }
     cw.secondAngle = cw.firstAngle + 0.5 * math.pi / (sides / 2) + math.pi / sides
     table.insert(customWall.player, cw)
@@ -334,14 +345,16 @@ end
 
 function updatePlayerWall(mFrameTime)
     function setPosition(cw)
-        cw_setVertexPos(cw.id, 0, (cw.distance + cw.THICKNESS) * math.cos(cw.firstAngle), (cw.distance + cw.THICKNESS) * math.sin(cw.firstAngle))
-        cw_setVertexPos(cw.id, 1, (cw.distance + cw.THICKNESS) * math.cos(cw.secondAngle), (cw.distance + cw.THICKNESS) * math.sin(cw.secondAngle))
-        cw_setVertexPos(cw.id, 2, cw.distance * math.cos(cw.secondAngle), cw.distance * math.sin(cw.secondAngle))
-        cw_setVertexPos(cw.id, 3, cw.distance * math.cos(cw.firstAngle), cw.distance * math.sin(cw.firstAngle))
+        cw_setVertexPos(cw.id, 0, cw.THICKNESS * math.cos(cw.firstAngle), cw.THICKNESS * math.sin(cw.firstAngle))
+        cw_setVertexPos(cw.id, 1, cw.THICKNESS * math.cos(cw.secondAngle), cw.THICKNESS * math.sin(cw.secondAngle))
+        cw_setVertexPos(cw.id, 2, playerWallsDistance.value * math.cos(cw.secondAngle), playerWallsDistance.value * math.sin(cw.secondAngle))
+        cw_setVertexPos(cw.id, 3, playerWallsDistance.value * math.cos(cw.firstAngle), playerWallsDistance.value * math.sin(cw.firstAngle))
     end
     for i = #customWall.player, 1, -1 do 
         local cw = customWall.player[i]
-        cw.THICKNESS = l_getRadiusMin() + addPlayerRadius
+        cw.firstAngle = cw.side * math.pi / (cw.sides / 2) + math.pi / cw.sides + cw.rotation.value
+        cw.secondAngle = cw.firstAngle + 0.5 * math.pi / (cw.sides / 2) + math.pi / cw.sides
+        cw.THICKNESS = l_getRadiusMin() + additionalPlayerRadius.value
         setPosition(customWall.player[i]) 
         cw_setVertexColor4Same(cw.id, cw.color.r.value, cw.color.g.value, cw.color.b.value, cw.color.a.value)
     end
@@ -352,6 +365,13 @@ function updatePlayerWall(mFrameTime)
             table.remove(customWall.player, i)
         end
         for i = 0, l_getSides() - 1 do playerWall(i) end
+    end
+end
+
+function rotatePlayerWalls(rotation, time, easing)
+    for i = #customWall.player, 1, -1 do 
+        local cw = customWall.player[i]
+        cw.rotation:run(cw.rotation.value, cw.rotation.value + rotation, time, easing)
     end
 end
 
@@ -373,10 +393,10 @@ end
 
 function updatePlayerArrow(mFrameTime)
     local cw = customWall.playerArrow[1]
-    cw.angle = u_getPlayerAngle()
-    cw.width = 15 / l_getRadiusMin() * playerWidthMult
+    cw.width = 15 / l_getRadiusMin() * playerWidthMult.value
     cw.distance = l_getRadiusMin() * 1.15
-    local height = cw.height * playerHeightMult
+    local height = cw.height * playerHeightMult.value
+    cw.angle = u_getPlayerAngle()
     cw_setVertexPos(cw.id, 0, cw.distance * math.cos(cw.angle), (cw.distance) * math.sin(cw.angle))
     cw_setVertexPos(cw.id, 1, (cw.distance - height) * math.cos(cw.angle + cw.width), (cw.distance - height) * math.sin(cw.angle + cw.width))
     cw_setVertexPos(cw.id, 2, (cw.distance - height) * math.cos(cw.angle - cw.width), (cw.distance - height) * math.sin(cw.angle - cw.width))
@@ -447,42 +467,65 @@ function pentagonDecorationPart(side, THICKNESS, xOffset, yOffset, color, angle)
         distance = 0,
         firstAngle = side * math.pi / (sides / 2) + math.pi / sides + (angle or 0),
         secondAngle = nil,
-        THICKNESS = THICKNESS,
+        THICKNESS = interpolation:new(),
+        rotation = interpolation:new(),
+        isThicknessInterpolationRunning = false,
         xOffset = xOffset, yOffset = yOffset,
-        color = getColorWithVariance(clone(color or mainColor))
+        color = getColorWithVariance(clone(color or mainColor)),
+        sides = sides,
+        side = side,
+        angle = angle or 0
     }
+    cw.THICKNESS.value = THICKNESS
     cw.secondAngle = cw.firstAngle + 0.5 * math.pi / (sides / 2) + math.pi / sides
     table.insert(customWall.pentagonDecoration, cw)
 end
 
 function updatePentagonDecoration(mFrameTime)
     local function setPosition(cw)
-        cw_setVertexPos(cw.id, 0, getAbsolutePosition((cw.distance + cw.THICKNESS) * math.cos(cw.firstAngle) + cw.xOffset, (cw.distance + cw.THICKNESS) * math.sin(cw.firstAngle) + cw.yOffset))
-        cw_setVertexPos(cw.id, 1, getAbsolutePosition((cw.distance + cw.THICKNESS) * math.cos(cw.secondAngle) + cw.xOffset, (cw.distance + cw.THICKNESS) * math.sin(cw.secondAngle) + cw.yOffset))
+        cw_setVertexPos(cw.id, 0, getAbsolutePosition((cw.distance + cw.THICKNESS.value) * math.cos(cw.firstAngle) + cw.xOffset, (cw.distance + cw.THICKNESS.value) * math.sin(cw.firstAngle) + cw.yOffset))
+        cw_setVertexPos(cw.id, 1, getAbsolutePosition((cw.distance + cw.THICKNESS.value) * math.cos(cw.secondAngle) + cw.xOffset, (cw.distance + cw.THICKNESS.value) * math.sin(cw.secondAngle) + cw.yOffset))
         cw_setVertexPos(cw.id, 2, getAbsolutePosition(cw.distance * math.cos(cw.secondAngle) + cw.xOffset, cw.distance * math.sin(cw.secondAngle) + cw.yOffset))
         cw_setVertexPos(cw.id, 3, getAbsolutePosition(cw.distance * math.cos(cw.firstAngle) + cw.xOffset, cw.distance * math.sin(cw.firstAngle) + cw.yOffset))
     end
     for i = #customWall.pentagonDecoration, 1, -1 do 
         local cw = customWall.pentagonDecoration[i]
+        cw.firstAngle = cw.side * math.pi / (cw.sides / 2) + math.pi / cw.sides + cw.angle + cw.rotation.value
+        cw.secondAngle = cw.firstAngle + 0.5 * math.pi / (cw.sides / 2) + math.pi / cw.sides
         setPosition(cw)
+        if cw.THICKNESS.value <= 0.01 then
+            cw.THICKNESS:destroy()
+            cw_destroy(cw.id)
+            table.remove(customWall.pentagonDecoration, i)
+        end
     end
 end
 
-function createPentagonDecoration(THICKNESS, xOffset, yOffset, color, angle) for i = 1, 5 do pentagonDecorationPart(i, THICKNESS, xOffset, yOffset, color, angle) end end
+function createPentagonDecoration(THICKNESS, xOffset, yOffset, color, angle, rotationMult) for i = 1, 5 do pentagonDecorationPart(i, THICKNESS, xOffset, yOffset, color, angle, rotationMult) end end
 
 -- Removes one part of pentagon decoration
 function removePentagonDecorationPart()
-    local index = #customWall.pentagonDecoration
-    local cw = customWall.pentagonDecoration[index]
-    if cw ~= nil then
-        cw_destroy(cw.id)
-        table.remove(customWall.pentagonDecoration, index)
+    for i = #customWall.pentagonDecoration, 1, -1 do
+        local cw = customWall.pentagonDecoration[i]
+        if cw == nil then return end
+        if not cw.isThicknessInterpolationRunning then
+            cw.THICKNESS:run(cw.THICKNESS.value + 20, 0, 25, easing.backIn)
+            cw.isThicknessInterpolationRunning = true
+            break
+        end
+    end
+end
+
+function rotatePentagonDecorations(rotation, time, easing)
+    for i = #customWall.pentagonDecoration, 1, -1 do 
+        local cw = customWall.pentagonDecoration[i]
+        cw.rotation:run(cw.rotation.value, cw.rotation.value + rotation, time, easing)
     end
 end
 
 function removePentagonDecorations()
     for i = #customWall.pentagonDecoration, 1, -1 do
-        cw = customWall.pentagonDecoration[i]
+        local cw = customWall.pentagonDecoration[i]
         cw_destroy(cw.id)
         table.remove(customWall.pentagonDecoration, i)
     end
@@ -492,8 +535,8 @@ end
 -- ROTATING CIRCLE
 ---------------------------------------------------------
 
-function circleDecorationPart(side, THICKNESS, offsetDistance, distance, angle, timeIncMult)
-    local sides = 6
+function circleDecorationPart(side, THICKNESS, offsetDistance, distance, angle, timeIncMult, sides)
+    local sides = sides or 6
     local cw = {
         id = cw_createNoCollision(),
         distance = distance or 0,
@@ -528,17 +571,17 @@ function updateCircles(mFrameTime)
     end
     for i = #customWall.rotatingCircle, 1, -1 do 
         local cw = customWall.rotatingCircle[i]
-        cw.time = cw.time + mFrameTime / 140 * cw.timeIncMult * (pulse.shaderTimeMult.value)
+        cw.time = cw.time + mFrameTime / 140 * cw.timeIncMult * (shaderTimeMult.value)
         setPosition(cw)
     end
 end
 
-function createRotatingCircle(THICKNESS, offsetDistance, distance, angle, timeIncM) 
+function createRotatingCircle(THICKNESS, offsetDistance, distance, angle, timeIncM, sides) 
     local timeIncMult = math.random(-60, 60) / 100
-    for i = 1, 6 do circleDecorationPart(i, THICKNESS, offsetDistance, distance, angle, timeIncM or timeIncMult) end 
+    for i = 1, sides or 6 do circleDecorationPart(i, THICKNESS, offsetDistance, distance, angle, timeIncM or timeIncMult, sides) end 
 end
 
-function removeRotatingCircles()
+function removeRotatingCircles(time, easing, rotationMult)
     for i = #customWall.rotatingCircle, 1, -1 do
         cw = customWall.rotatingCircle[i]
         cw_destroy(cw.id)
@@ -557,20 +600,21 @@ function pulseWall(side, THICKNESS, speedMult, distance, xOffset, yOffset)
         distance = distance or 0,
         firstAngle = side * math.pi / (sides / 2) + math.pi / sides,
         secondAngle = nil,
-        THICKNESS = THICKNESS,
+        THICKNESS = interpolation:new(),
         xOffset = xOffset or 0, 
         yOffset = yOffset or 0,
         speedMult = speedMult or 1,
         color = getColorWithVariance(clone(mainColor))
     }
+    cw.THICKNESS:run(THICKNESS, 0, 180, easing.easeOut)
     cw.secondAngle = cw.firstAngle + 0.5 * math.pi / (sides / 2) + math.pi / sides
     table.insert(customWall.pulse, cw)
 end
 
 function updatePulseWalls(mFrameTime)
     function setPosition(cw)
-        cw_setVertexPos(cw.id, 0, (cw.distance + cw.THICKNESS + wallLeftSkew) * math.cos(cw.firstAngle + wallLeftAngle) + cw.xOffset, (cw.distance + cw.THICKNESS + wallLeftSkew) * math.sin(cw.firstAngle + wallLeftAngle) + cw.yOffset)
-        cw_setVertexPos(cw.id, 1, (cw.distance + cw.THICKNESS + wallRightSkew) * math.cos(cw.secondAngle + wallRightAngle) + cw.xOffset, (cw.distance + cw.THICKNESS + wallRightSkew) * math.sin(cw.secondAngle + wallRightAngle) + cw.yOffset)
+        cw_setVertexPos(cw.id, 0, (cw.distance + cw.THICKNESS.value + wallLeftSkew.value) * math.cos(cw.firstAngle + wallLeftAngle.value) + cw.xOffset, (cw.distance + cw.THICKNESS.value + wallLeftSkew.value) * math.sin(cw.firstAngle + wallLeftAngle.value) + cw.yOffset)
+        cw_setVertexPos(cw.id, 1, (cw.distance + cw.THICKNESS.value + wallRightSkew.value) * math.cos(cw.secondAngle + wallRightAngle.value) + cw.xOffset, (cw.distance + cw.THICKNESS.value + wallRightSkew.value) * math.sin(cw.secondAngle + wallRightAngle.value) + cw.yOffset)
         cw_setVertexPos(cw.id, 2, cw.distance * math.cos(cw.secondAngle) + cw.xOffset, cw.distance * math.sin(cw.secondAngle) + cw.yOffset)
         cw_setVertexPos(cw.id, 3, cw.distance * math.cos(cw.firstAngle) + cw.xOffset, cw.distance * math.sin(cw.firstAngle) + cw.yOffset)
     end
@@ -601,6 +645,7 @@ function particle(size, xOffset, yOffset)
         THICKNESS = THICKNESS,
         xOffset = xOffset or 0, 
         yOffset = yOffset or 0,
+        shrinkSpeed = math.random(985, 1016) / 1000,
         color = getColorWithVariance(clone(redColor))
     }
     table.insert(customWall.particle, cw)
@@ -616,6 +661,8 @@ function updateParticles(mFrameTime)
     for i = #customWall.particle, 1, -1 do 
         local cw = customWall.particle[i]
         cw.size = cw.size * 0.99
+        cw.xOffset = cw.xOffset * cw.shrinkSpeed
+        cw.yOffset = cw.yOffset * cw.shrinkSpeed
         setPosition(cw)
         if cw.size < 0.001 then 
             cw_destroy(cw.id)
@@ -624,4 +671,51 @@ function updateParticles(mFrameTime)
     end
 end
 
-function createParticles(amount, size, xOffset, yOffset) for i = 1, amount do particle(size, math.random(-1000, 1000), math.random(-1000, 1000)) end end
+function createParticles(amount, size) for i = 1, amount do particle(size, math.random(-800, 800), math.random(-800, 800)) end end
+
+
+----------------------------------------------------------
+-- FAKE FAKE PLAYER ARROW (used in fifth part)
+----------------------------------------------------------
+
+function fakePlayerArrow(distanceFromCenter, angleOffset, timeIncMult, distance, width, height)
+    local cw = {
+        id = cw_createNoCollision(),
+        distance = distance,
+        angle = u_getPlayerAngle(),
+        additionalAngle = math.random(0, 314) / 100,
+        color = clone(mainColor),
+        width = width or 0.2,
+        height = height or 9,
+        time = 0,
+        distanceFromCenter = distanceFromCenter or 0,
+        angleOffset = angleOffset or 0,
+        timeIncMult = timeIncMult or 1,
+    }
+    table.insert(customWall.fakePlayerArrows, cw) -- Even though it's single it requires color pulse and change support.
+end
+
+function updateFakePlayerArrows(mFrameTime)
+    for i = #customWall.fakePlayerArrows, 1, -1 do
+        local cw = customWall.fakePlayerArrows[i]
+        cw.angle = u_getPlayerAngle()
+        cw.time = cw.time + mFrameTime / 140 * cw.timeIncMult * (shaderTimeMult.value)
+        cw_setVertexPos(cw.id, 0, getAbsolutePosition(
+            cw.distance * math.cos(cw.angle + cw.additionalAngle) + cw.distanceFromCenter * math.cos(cw.time + cw.angleOffset),
+             (cw.distance) * math.sin(cw.angle + cw.additionalAngle) + cw.distanceFromCenter * math.sin(cw.time + cw.angleOffset)
+        ))
+        cw_setVertexPos(cw.id, 1, getAbsolutePosition(
+            (cw.distance - cw.height) * math.cos(cw.angle + cw.additionalAngle + cw.width) + cw.distanceFromCenter * math.cos(cw.time + cw.angleOffset), 
+            (cw.distance - cw.height) * math.sin(cw.angle + cw.additionalAngle + cw.width) + cw.distanceFromCenter * math.sin(cw.time + cw.angleOffset)
+        ))
+        cw_setVertexPos(cw.id, 2, getAbsolutePosition(
+            (cw.distance - cw.height) * math.cos(cw.angle + cw.additionalAngle - cw.width) + cw.distanceFromCenter * math.cos(cw.time + cw.angleOffset), 
+            (cw.distance - cw.height) * math.sin(cw.angle + cw.additionalAngle - cw.width) + cw.distanceFromCenter * math.sin(cw.time + cw.angleOffset)
+        ))
+        cw_setVertexPos(cw.id, 3,  getAbsolutePosition(
+            cw.distance * math.cos(cw.angle + cw.additionalAngle) + cw.distanceFromCenter * math.cos(cw.time + cw.angleOffset), 
+            (cw.distance) * math.sin(cw.angle + cw.additionalAngle) + cw.distanceFromCenter * math.sin(cw.time + cw.angleOffset)
+        ))
+        cw_setVertexColor4Same(cw.id, cw.color.r.value, cw.color.g.value, cw.color.b.value, cw.color.a.value)
+    end
+end
