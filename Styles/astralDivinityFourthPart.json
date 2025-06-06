@@ -1,5 +1,5 @@
 {
-    "id": "astralDivinityDrop",
+    "id": "astralDivinityFourthPart",
 
     "hue_min": 0,
     "hue_max": 360,
@@ -17,7 +17,7 @@
     "3D_spacing": 1,
 
     "main": { "main": true, "dynamic": false, "value": [235, 225, 215, 255], "pulse": [0, 0, 0, 0] },
-    "text_color": {"value": [240, 115, 155, 255], "pulse": [0, -30, -30, 0] },
+    "text_color": {"value": [240, 165, 155, 255], "pulse": [0, -30, -30, 0] },
 
     "colors":
     [

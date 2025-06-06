@@ -7,9 +7,9 @@
     "hue_increment": 0.7,
     "max_swap_time": 0,
 
-    "pulse_min": 0.0,
-    "pulse_max": 1.5,
-    "pulse_increment": 0.05,
+    "pulse_min": -2,
+    "pulse_max": 1.2,
+    "pulse_increment": 0.1,
 
     "3D_pulse_speed": 0,
     "3D_depth": 20,
@@ -22,7 +22,7 @@
 
     "main": { "main": true, "dynamic": false, "value": [255, 255, 0, 255], "pulse": [0, 0, 0, 0] },
     "cap_color": "main",
-    "text_color": {"value": [255, 255, 55, 255], "pulse": [0, 0, 0, 0] },
+    "text_color": {"value": [255, 200, 55, 255], "pulse": [0, 35, -35, 0] },
 
     "colors":
     [

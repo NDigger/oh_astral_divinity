@@ -138,6 +138,7 @@ globalTimings = {
             ]])
             local delayedTimings = {1.47, 5.86, 8.05} -- fixes player pulse
             createEvents(delayedTimings, [[
+            pulseTime = pulseTimePulse
             rotationSpeed:run(5, 0, 60, easing.easeOut)
             pulsingLineWalls(150, 0)
             pulseCustomWallsColor(0, 0, 255, 0, 200)
@@ -172,6 +173,8 @@ globalTimings = {
             createParticles(30, 20)
             shaderTimeMult:run(5, 1, 60, easing.easeOut)
             rotatePentagonDecorations(math.pi/5, 45, easing.easeOut)
+            pulsingLineWalls(1, -430, -2200, 50, 50, 2500)
+            pulsingLineWalls(1, 430, -2200, 50, 50, 2500)
         ]])
         end,
         function()
@@ -187,6 +190,9 @@ globalTimings = {
             shaderTimeMult:run(5, 1, 60, easing.easeOut)
             rotatePentagonDecorations(math.pi/4, 45, easing.easeOut)
             pulseCustomWallsColor(20, 0, 0, 0, 10)
+            local val = math.random(-300, 300)
+            pulsingLineWalls(1, val, math.random(-500, 500), 1000, 1000, 15)
+            pulsingLineWalls(1, val, -2200, 15, 15, 2500)
             ]])
         end,
         function()
@@ -196,12 +202,14 @@ globalTimings = {
             skew:run(0.2, 0.01, 30, easing.easeOut)
             scoreFloatingNumbers:run(5, 0, 60, easing.easeOut)
             minRadius:run(80, 60, 10, easing.easeOut)
-            l_setRotation(l_getRotation() + l_getRotationSpeed() * 90)
             removePentagonDecorationPart()
             createParticles(10, 10)
             shaderTimeMult:run(0.5, 1, 50, easing.easeOut)
             rotatePentagonDecorations(0.8, 15, easing.easeOut)
             pulseCustomWallsColor(-30, 0, 0, 0, 10)
+            playerWallsDistance:run(l_getRadiusMin() * 0.65, 0, 60, easing.backIn)
+            pulsingLineWalls(1, math.random(-300, 300), -2200, 10, 10, 2500)
+            l_setRotation(l_getRotation() - 360 / l_getSides())
         ]])
         end,
         function()
@@ -209,7 +217,7 @@ globalTimings = {
             createEvents(timings, [[
             scoreFloatingNumbers:run(5, 0, 40, easing.easeOut)
             minRadius:run(80, 60, 30, easing.easeOut)
-            rotatePentagonDecorations(0.8, 15, easing.easeOut)
+            rotatePentagonDecorations(1, 35, easing.easeOut)
         ]])
         end,
         function()
@@ -217,23 +225,25 @@ globalTimings = {
             createEvents(timings, [[
             scoreFloatingNumbers:run(5, 0, 40, easing.easeOut)
             minRadius:run(80, 60, 30, easing.easeOut)
-            l_setRotation(l_getRotation() - l_getRotationSpeed() * 90)
+            l_setRotation(l_getRotation() - 360 / l_getSides())
             shaderTimeMult:run(0, 1, 30, easing.easeOut)
-            rotatePentagonDecorations(0.8, 15, easing.easeOut)
+            rotatePentagonDecorations(1, 35, easing.easeOut)
+            removePentagonDecorationPart()
+            pulsingLineWalls(1, math.random(-300, 300), -2200, 15, 15, 2500)
         ]])
         end
     },
     thirdPart = {
         function()
-            local timings = {26.03, 26.62, 27.17, 27.73, 30.39, 30.99, 31.50, 32.1, 34.78, 35.35, 35.87, 36.5, 38.58, 39.12, 39.70, 40.18, 40.8}
+            local timings = {26.03, 26.62, 27.17, 27.73, 30.39, 30.99, 31.50, 32.1, 34.78, 35.35, 35.87, 36.5, 39.12, 39.70, 40.18, 40.8}
             createEvents(timings, [[
-            createLineWalls(5)
+            createLineWalls(6)
             bgTileOffset:run(s_getBGRotationOffset(), s_getBGRotationOffset() + 620, 80, easing.backOut)
             minRadius:run(80, 60, 50, easing.easeOut)
             scoreFloatingNumbers:run(11, 0, 60, easing.easeOut)
-            skew:run(0.4, 0, 60, easing.easeOut)
+            skew:run(0.4, 0.1, 60, easing.easeOut)
             rotationSpeed:run(1.7, 0, 150, easing.backOut)
-            pulseCustomWallsColor(math.random(20, 60), 0, math.random(20, 60), 0, 20)
+            pulseCustomWallsColor(math.random(10, 30), math.random(10, 30), 0, 0, 20)
             alpha3d:run(50, 3, 40, easing.easeOut)
             pulseTime = pulseTimePulse
             wallRightSkew:run(0, 0, 30, easing.backIn)
@@ -241,18 +251,21 @@ globalTimings = {
             wallLeftAngle:run(0.4, 0, 30, easing.backIn)
             rotatePentagonDecorations(3.5, 50, easing.easeOut)
             playerWallsDistance:run(0, 60, 60, easing.easeOut)
+            shaderTimeMult:run(2, 1, 90, easing.easeOut)
+            createPentagonDecoration(10, 670, (#customWall.pentagonDecoration * 0.5 + 1) % 4 * 50 - 75)
+            createPentagonDecoration(10, -670, ((#customWall.pentagonDecoration * 0.5 + 2) % 4 * 50 - 75) * -1)
         ]])
         end,
         function()
-            local timings = {28.24, 28.82, 29.35, 29.89, 32.62, 33.18, 33.71, 34.27, 36.98, 37.55, 38.08, 41.31, 41.88, 42.45, 42.96}
+            local timings = {28.24, 28.82, 29.35, 29.89, 32.62, 33.18, 33.71, 34.27, 36.98, 37.55, 38.08, 38.58, 41.31, 41.88, 42.45, 42.96}
             createEvents(timings, [[
-            createLineWalls(5)
+            createLineWalls(4, 60, true)
             bgTileOffset:run(s_getBGRotationOffset(), s_getBGRotationOffset() - 460, 70, easing.backOut)
             scoreFloatingNumbers:run(8, 0, 60, easing.easeOut)
             minRadius:run(90, 50, 20, easing.easeOut)
-            skew:run(-0.1, 0.2, 80, easing.backOut)
+            skew:run(-0.1, 0.3, 80, easing.backOut)
             rotationSpeed:run(-2, 0, 50, easing.backOut)
-            pulseCustomWallsColor(0, math.random(10, 90), math.random(20, 60), -255, 20)
+            pulseCustomWallsColor(math.random(10, 30), math.random(10, 30), 0, 0, 20)
             alpha3d:run(50, 3, 40, easing.easeOut)
             additionalPlayerRadius:run(-15, 0, 100, easing.easeOut)
             playerWidthMult:run(0, 1, 120, easing.easeOut)
@@ -260,7 +273,9 @@ globalTimings = {
             wallLeftSkew:run(30, 0, 30, easing.backIn)
             wallLeftAngle:run(0.3, 0, 30, easing.backIn)
             rotatePentagonDecorations(-3.5, 50, easing.easeOut)
-            playerWallsDistance:run(60, 0, 120, easing.easeOut)
+            playerWallsDistance:run(70, 0, 120, easing.easeOut)
+            shaderTimeMult:run(-15, 1, 60, easing.easeOut)
+            for i = 1, 10 do removePentagonDecorationPart(easing.easeOut) end
         ]])
         end,
         function()
@@ -277,7 +292,8 @@ globalTimings = {
             wallRightAngle:run(0.15, 0, 30, easing.backIn)
             wallLeftAngle:run(0.15, 0, 30, easing.backIn)
             rotatePentagonDecorations(2, 20, easing.easeOut)
-            playerWallsDistance:run(90, 0, 50, easing.easeOut)
+            playerWallsDistance:run(60, 0, 120, easing.easeOut)
+            shaderTimeMult:run(-3.5, 1, 30, easing.easeOut)
         ]])
         end
     },
@@ -290,7 +306,7 @@ globalTimings = {
             pulseCustomWallsColor(math.random(-30, 0), math.random(-30, 0), 0, 0, 20)
             alpha3d:run(5, 20, 40, easing.easeIn)
             spacing3d:run(15, 5, 40, easing.easeOut)
-            scoreFloatingNumbers:run(11, 0, 60, easing.easeOut)
+            scoreFloatingNumbers:run(9, 0, 60, easing.easeOut)
             playerHeightMult:run(2, 1, 60, easing.easeOut)
             pulseTime = pulseTimePulse
             shaderTimeMult:run(5, 1, 60, easing.easeOut)
@@ -305,7 +321,7 @@ globalTimings = {
             minRadius:run(110, 80, 40, easing.backOut)
             rotationSpeed:run(getRndDir() * 1.5, 0, 100, easing.easeOut)
             pulseCustomWallsColor(-20, 0, 0, 0, 20)
-            scoreFloatingNumbers:run(8, 0, 60, easing.easeOut)
+            scoreFloatingNumbers:run(6, 0, 60, easing.easeOut)
             playerWidthMult:run(2, 1, 60, easing.easeOut)
             pulseTime = pulseTimePulse
             shaderTimeMult:run(4, 1, 60, easing.easeOut)
@@ -319,7 +335,7 @@ globalTimings = {
             local timings = {45.96, 48.04, 50.33, 53.06, 54.59, 57.02, 59.07}
             createEvents(timings, [[
             minRadius:run(130, 70, 40, easing.easeOut)
-            scoreFloatingNumbers:run(15, 0, 60, easing.easeOut)
+            scoreFloatingNumbers:run(8, 0, 60, easing.easeOut)
             shaderTimeMult:run(3, 1, 60, easing.easeOut)
             rotatePlayerWalls(math.pi * 2, 90, easing.backOut)
         ]])
