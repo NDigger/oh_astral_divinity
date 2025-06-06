@@ -80,7 +80,7 @@ end
 
 deathFrames = 0
 function onPreDeath()
-    if deathFrames == 0 then l_addTracked("accuracy", "accuracy") end
+    if deathFrames > 1 then l_addTracked("accuracy", "accuracy") end
     deathFrames = deathFrames + 1
 end
 
