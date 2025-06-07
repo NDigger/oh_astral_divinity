@@ -498,7 +498,7 @@ function onLoad()
     e_waitUntilS(offset + 80.09); e_eval([[
         shaderTimeMult:run(1, 0, 300)
         spacing3d:run(s_get3dSpacing(), 0, 260)
-        rotationSpeed:run(1, 0, 320)
+        rotationSpeed:run(1, 0, 220)
     ]])
     e_waitUntilS(offset + 81.69); e_eval([[
     ]])
