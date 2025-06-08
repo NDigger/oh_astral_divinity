@@ -115,6 +115,12 @@ function getRndDir() return math.random(0, 1) == 0 and 1 or -1 end
 globalTimings = {
     firstPart = {
         function()
+            local timings = {0.005} 
+            createEvents(timings, [[ 
+            ALLOW_PRE_DELAY = 1 
+        ]])
+        end,
+        function()
             local timings = {0.13, 0.68, 1.22, 2.31, 2.86, 4.52, 5.05, 5.61, 6.68, 7.24} 
             createEvents(timings, [[ 
             s_setBGRotationOffset(s_getBGRotationOffset() + 360 / l_getSides()) 
@@ -135,6 +141,8 @@ globalTimings = {
             local timings = {1.46, 5.85, 8.04}
             createEvents(timings, [[
             l_setSides(l_getSides() + 1)
+            t_clear()
+            t_wait(calcHalfSidesDelay())
             ]])
             local delayedTimings = {1.47, 5.86, 8.05} -- fixes player pulse
             createEvents(delayedTimings, [[
@@ -359,6 +367,8 @@ globalTimings = {
             createEvents(timings, [[
             scoreFloatingNumbers:run(3, 0, 60, easing.easeOut)
             l_setSides(l_getSides() - 1)
+            t_clear()
+            t_wait(calcHalfSidesDelay())
             shaderTimeMult:run(2, 1, 60, easing.easeOut)
         ]])
         end
