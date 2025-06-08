@@ -1,19 +1,11 @@
 -- include useful files
 u_execScript("utils.lua")
-u_execScript("common.lua")
-u_execScript("usefulpatterns.lua")
 u_execScript("astralDivinityTimelines.lua")
 u_execScript("astralDivinityCustomWalls.lua")
 
 THICKNESS = 60 -- I find this fitting but it can be edited of course. I'd not recommend making it smaller than 40
-function addPattern(mKey) -- Insert your fun here
-    if mKey == 0 then pLRBarrage(math.random(1, 2), 6, 5)
-    end
-end
+u_execScript("xxixstuff/levelConfig.lua")
 
-keys = { 0 }
-shuffle(keys)
-index = 0
 achievementUnlocked = false
 hardAchievementUnlocked = false
 
@@ -91,7 +83,7 @@ function onInit()
     l_setSpeedMult(3)
     l_setSpeedInc(0)
     l_setSpeedMax(4.75)
-    l_setDelayMult(1)
+    l_setDelayMult(1.5)
 
     l_setRotationSpeed(0)
 
@@ -121,6 +113,10 @@ function onInit()
 
     u_setFlashColor(0, 0, 0)
     u_setFlashEffect(255)
+
+    l_setSwapEnabled(false)
+	l_set3dRequired(true)
+	a_syncMusicToDM(false)
 
     backgroundShader = shdr_getShaderId("divinityBackground.frag")
     backgroundShaderDrop = shdr_getShaderId("divinityBackgroundDrop.frag")
@@ -157,16 +153,6 @@ function onRenderStage(mFrameTime)
     shdr_setUniformFVec4(backgroundShaderFourthPart, "color", r, g, b, a) 
     shdr_setUniformF(backgroundShaderFourthPart, "gridSize", shaderGridSize.value) 
     shdr_setUniformF(backgroundShaderFourthPart, "colorVariance", shaderColorVariance.value)
-end
-
-function onStep()
-    addPattern(keys[index])
-    index = index + 1
-
-    if index - 1 == #keys then
-        index = 1
-        shuffle(keys)
-    end
 end
 
 function onLoad()
@@ -217,6 +203,8 @@ function onLoad()
         u_setFlashEffect(255)
         applyMainColor()
         l_setSides(6)
+        t_clear()
+        t_wait(calcHalfSidesDelay())
         createPentagonDecoration(42, 620, 340, redColor)
         createPentagonDecoration(40, 540, 342, redColor)
         createPentagonDecoration(38, 460, 344, redColor)
@@ -274,6 +262,9 @@ function onLoad()
     e_waitUntilS(offset + 25.93);e_eval([[
         s_setStyle("astralDivinityThirdPart")
         l_setSides(5)
+        t_clear()
+        t_wait(calcHalfSidesDelay())
+        t_wait(calcHalfSidesDelay())
         u_setFlashEffect(255)
         shdr_resetActiveFragmentShader(0)
         setMainColor(195, 195, 240, 255)
@@ -333,6 +324,8 @@ function onLoad()
         s_setBGRotationOffset(0)
         u_setFlashEffect(255)
         l_setSides(8)
+        t_clear()
+        t_wait(calcHalfSidesDelay())
         setMainColor(225, 200, 205, 255)
         setCustomWallColorVariance(30, 10, 10, 0)
         skew:run(0, 0.2, 100, easing.backOut)
@@ -384,6 +377,8 @@ function onLoad()
     ]])
     e_waitUntilS(offset + 54.25);e_eval([[
         l_setSides(10)
+        t_clear()
+        t_wait(calcHalfSidesDelay())
         u_setFlashEffect(255)
         deleteSymbols()
         createPentagonDecoration(11, -270, -270)
@@ -467,6 +462,8 @@ function onLoad()
         setCustomWallColorVariance(10, 10, 10, 0)
         applyMainColor()
         e_eval('l_setSides(5)')
+        t_clear()
+        t_wait(calcHalfSidesDelay())
         for i = 1, 6 do 
             createRotatingCircle(5, 250, 50, i/6*math.pi*2, 4, math.random(3, 10))
             fakePlayerArrow(250, i/6*math.pi*2, 4, 70, 0.2, 9)
@@ -492,7 +489,7 @@ function onLoad()
             fakePlayerArrow(850, i/21*math.pi*2, -0.5, 30, 0.12, 6) 
         end
     ]])
-    e_waitUntilS(offset + 63.01);e_eval('l_setSides(4)')
+    e_waitUntilS(offset + 63.01);e_eval('l_setSides(4) t_clear() t_wait(calcHalfSidesDelay())')
 
     -- END
     e_waitUntilS(offset + 80.09); e_eval([[
