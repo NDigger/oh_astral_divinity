@@ -51,7 +51,7 @@ function addPattern(key)
     end
 end
 
-keys = { 0, 1, 11, 12, 100, 102, 200, 201, 300, 301, 302, 303, 500, 500, 1000, 1001, 1004 }
+keys = { 0 } -- set in levelDifficulties.lua
 shuffle(keys)
 index = 1
 

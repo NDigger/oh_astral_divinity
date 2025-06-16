@@ -142,7 +142,6 @@ globalTimings = {
             createEvents(timings, [[
             l_setSides(l_getSides() + 1)
             t_clear()
-            t_wait(calcHalfSidesDelay())
             ]])
             local delayedTimings = {1.47, 5.86, 8.05} -- fixes player pulse
             createEvents(delayedTimings, [[
@@ -368,7 +367,6 @@ globalTimings = {
             scoreFloatingNumbers:run(3, 0, 60, easing.easeOut)
             l_setSides(l_getSides() - 1)
             t_clear()
-            t_wait(calcHalfSidesDelay())
             shaderTimeMult:run(2, 1, 60, easing.easeOut)
         ]])
         end

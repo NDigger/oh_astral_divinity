@@ -5,6 +5,7 @@ u_execScript("astralDivinityCustomWalls.lua")
 
 THICKNESS = 60 -- I find this fitting but it can be edited of course. I'd not recommend making it smaller than 40
 u_execScript("xxixstuff/levelConfig.lua")
+u_execScript("xxixstuff/levelDifficulties.lua")
 
 achievementUnlocked = false
 hardAchievementUnlocked = false
@@ -83,13 +84,13 @@ function onInit()
     l_setSpeedMult(3)
     l_setSpeedInc(0)
     l_setSpeedMax(4.75)
-    l_setDelayMult(1.5)
+    l_setDelayMult(1.4)
 
     l_setRotationSpeed(0)
 
     l_setDelayInc(0)
     l_setFastSpin(0)
-    l_setSides(3)
+    makeTriangle()
     for i = 0, l_getSides() - 1 do playerWall(i) end
     createOtherPlayerWalls()
 
@@ -170,6 +171,8 @@ function onLoad()
     e_waitUntilS(offset + 3.68);e_eval([[
         createSymbol(4, 0, 280)
         l_setSpeedMult(0.5)
+        t_clear()
+        t_wait(calcHalfSidesDelay() * 1.75)
         u_setFlashColor(255, 255, 255)
     ]])
     e_waitUntilS(offset + 3.96);e_eval([[
@@ -202,9 +205,7 @@ function onLoad()
         setCustomWallColorVariance(20, 0, 10, 0)
         u_setFlashEffect(255)
         applyMainColor()
-        l_setSides(6)
-        t_clear()
-        t_wait(calcHalfSidesDelay())
+        makeHexagon()
         createPentagonDecoration(42, 620, 340, redColor)
         createPentagonDecoration(40, 540, 342, redColor)
         createPentagonDecoration(38, 460, 344, redColor)
@@ -261,10 +262,7 @@ function onLoad()
     -- Third Part
     e_waitUntilS(offset + 25.93);e_eval([[
         s_setStyle("astralDivinityThirdPart")
-        l_setSides(5)
-        t_clear()
-        t_wait(calcHalfSidesDelay())
-        t_wait(calcHalfSidesDelay())
+        makePentagon()
         u_setFlashEffect(255)
         shdr_resetActiveFragmentShader(0)
         setMainColor(195, 195, 240, 255)
@@ -323,9 +321,7 @@ function onLoad()
         deleteSymbols()
         s_setBGRotationOffset(0)
         u_setFlashEffect(255)
-        l_setSides(8)
-        t_clear()
-        t_wait(calcHalfSidesDelay())
+        makeOctagon()
         setMainColor(225, 200, 205, 255)
         setCustomWallColorVariance(30, 10, 10, 0)
         skew:run(0, 0.2, 100, easing.backOut)
@@ -376,9 +372,7 @@ function onLoad()
         pulsingLineWalls(1, -120, -2200, 15, 15, 2500)
     ]])
     e_waitUntilS(offset + 54.25);e_eval([[
-        l_setSides(10)
-        t_clear()
-        t_wait(calcHalfSidesDelay())
+        makeDecagon()
         u_setFlashEffect(255)
         deleteSymbols()
         createPentagonDecoration(11, -270, -270)
@@ -461,9 +455,7 @@ function onLoad()
         setMainColor(245, 245, 245, 255)
         setCustomWallColorVariance(10, 10, 10, 0)
         applyMainColor()
-        e_eval('l_setSides(5)')
-        t_clear()
-        t_wait(calcHalfSidesDelay())
+        makePentagon()
         for i = 1, 6 do 
             createRotatingCircle(5, 250, 50, i/6*math.pi*2, 4, math.random(3, 10))
             fakePlayerArrow(250, i/6*math.pi*2, 4, 70, 0.2, 9)
@@ -489,7 +481,7 @@ function onLoad()
             fakePlayerArrow(850, i/21*math.pi*2, -0.5, 30, 0.12, 6) 
         end
     ]])
-    e_waitUntilS(offset + 63.01);e_eval('l_setSides(4) t_clear() t_wait(calcHalfSidesDelay())')
+    e_waitUntilS(offset + 63.01);e_eval('makeSquare()')
 
     -- END
     e_waitUntilS(offset + 80.09); e_eval([[
