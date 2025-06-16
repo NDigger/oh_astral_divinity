@@ -1,4 +1,4 @@
-if u_getDifficultyMult() == 1 then
+--if u_getDifficultyMult() == 1 then
     function makeTriangle()
         l_setSides(3)
 
@@ -61,4 +61,4 @@ if u_getDifficultyMult() == 1 then
 
         t_clear()
     end
-end
+--end

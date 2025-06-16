@@ -28,7 +28,6 @@ scoreFloatingNumbers = interpolation:new()
 skew = interpolation:new(s_set3dSkew)
 spacing3d = interpolation:new(s_set3dSpacing)
 alpha3d = interpolation:new(s_set3dAlphaMult)
-speed = interpolation:new(l_setSpeedMult)
 additionalPlayerRadius = interpolation:new()
 playerWidthMult = interpolation:new()
 playerHeightMult = interpolation:new()
@@ -80,8 +79,89 @@ end
 
 playerArrow() -- Creating fake arrow which I will be stretching
 
+difficulty = ""
+speed = 0
+rotSpeed = 0
+rotSpeedTimeMult = 1
+shaderTimeIncMult = 1
+timerPulseMult = 1
+pentagonDecorationsRotationMult = 1
+pulseLineWallsHeightMult = 1
+playerDeformationMult = 1
+pulseSkewMult = 1
+speedOnPart = {}
+
+speedMult = interpolation:new(l_setSpeedMult)
 function onInit()
-    l_setSpeedMult(3)
+    local diff = simplifyFloat(u_getDifficultyMult(), 2)
+    if diff == 0.99 then 
+        speed = 2
+        rotSpeed = 0.8
+        rotSpeedTimeMult = 0.9
+        --
+        shaderTimeIncMult = 0.5
+        timerPulseMult = 0.7
+        pentagonDecorationsRotationMult = 0.6
+        pulseLineWallsHeightMult = 0.8
+        playerDeformationMult = 0.8
+        pulseSkewMult = 0.8
+        difficulty = "friendly"
+    elseif diff == 1 then 
+        speed = 2.5
+        rotSpeed = 1.1
+        rotSpeedTimeMult = 1
+        --
+        shaderTimeIncMult = 0.9
+        timerPulseMult = 0.9
+        pentagonDecorationsRotationMult = 1
+        pulseLineWallsHeightMult = 1
+        playerDeformationMult = 1
+        pulseSkewMult = 1
+        difficulty = "sane"
+    elseif diff == 1.01 then 
+        speed = 2.9
+        rotSpeed = 1.4
+        rotSpeedTimeMult = 1.15
+        --
+        shaderTimeIncMult = 1.3
+        timerPulseMult = 1.1
+        pentagonDecorationsRotationMult = 1.5
+        pulseLineWallsHeightMult = 1.1
+        playerDeformationMult = 1.2
+        pulseSkewMult = 1.15
+        difficulty = "insane"
+    elseif diff == 1.02 then 
+        speed = 3.4
+        rotSpeed = 1.6
+        rotSpeedTimeMult = 1.25
+        --
+        shaderTimeIncMult = 1.6
+        timerPulseMult = 1.25
+        pentagonDecorationsRotationMult = 2.25
+        pulseLineWallsHeightMult = 1.2
+        playerDeformationMult = 1.4
+        pulseSkewMult = 1.3
+        difficulty = "elite"
+    elseif diff == 1.03 then 
+        speed = 3.95
+        rotSpeed = 1.9
+        rotSpeedTimeMult = 1.35
+        --
+        shaderTimeIncMult = 2
+        timerPulseMult = 1.5
+        pentagonDecorationsRotationMult = 3.25
+        pulseLineWallsHeightMult = 1.3
+        playerDeformationMult = 1.6
+        difficulty = "divine"
+    end
+    speedOnPart = {
+        speed,
+        speed * 0.9,
+        speed * 0.77,
+        speed * 0.71,
+        speed,
+    }
+    l_setSpeedMult(speedOnPart[1])
     l_setSpeedInc(0)
     l_setSpeedMax(4.75)
     l_setDelayMult(1.4)
@@ -110,6 +190,7 @@ function onInit()
     l_setBeatPulseDelayMax(0)
     l_setBeatPulseSpeedMult(0)
     l_overrideScore("overrideScore")
+    l_addTracked('difficulty', 'difficulty')
     l_addTracked('percent', 'percent')
 
     u_setFlashColor(0, 0, 0)
@@ -135,7 +216,7 @@ end
 shaderTime = 0 -- It pulses when I ask it to do so. Quite useful.
 function onRenderStage(mFrameTime)
     local r, g, b, a = mainColor.r.value / 255, mainColor.g.value / 255, mainColor.b.value / 255, mainColor.a.value / 255
-    shaderTime = shaderTime + mFrameTime * shaderTimeMult.value / 1000
+    shaderTime = shaderTime + mFrameTime * shaderTimeMult.value / 1000 * shaderTimeIncMult
     shdr_setUniformFVec2(backgroundShader, "u_resolution", u_getWidth(), u_getHeight())
     shdr_setUniformF(backgroundShader, "u_time", shaderTime)
     shdr_setUniformFVec4(backgroundShader, "color", r, g, b, a) 
@@ -166,11 +247,13 @@ function onLoad()
     -- HERE ARE ONLY EVENTS WHICH HAPPEN ONE TIME
     ---------------------------------------------------------------------
 
+    --------------------------------------------------------------------------
     -- First Part
+    --------------------------------------------------------------------------
     -- Symbols 1 
     e_waitUntilS(offset + 3.68);e_eval([[
         createSymbol(4, 0, 280)
-        l_setSpeedMult(0.5)
+        l_setSpeedMult(0)
         t_clear()
         t_wait(calcHalfSidesDelay() * 1.75)
         u_setFlashColor(255, 255, 255)
@@ -186,7 +269,7 @@ function onLoad()
         createSymbol(7, -400, 280)
         applyToSymbol(4, function(cw) cw.x:run(cw.x.value - 200, cw.x.value, 25, easing.easeOut) end)
         applyToSymbol(5, function(cw) cw.x:run(cw.x.value + 200, cw.x.value, 25, easing.easeOut) end)
-        l_setSpeedMult(2)
+        l_setSpeedMult(speedOnPart[1])
     ]])
     e_waitUntilS(offset + 4.23);e_eval([[
         rotatePlayerWalls(math.ceil(customWall.player[1].rotation.value / math.pi / l_getSides()) * math.pi / l_getSides() - math.pi, 30, easing.easeOut)
@@ -197,8 +280,11 @@ function onLoad()
     e_waitUntilS(offset + 8.08);e_eval('applyToSymbol(3, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 50, easing.backIn) end)')
     e_waitUntilS(offset + 8.14);e_eval('applyToSymbol(5, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 50, easing.backIn) end)')
 
+    --------------------------------------------------------------------------
     -- Second Part (Drop)
-    e_waitUntilS(offset + 8.45);e_eval([[ 
+    --------------------------------------------------------------------------
+    e_waitUntilS(offset + 8.45);e_eval([[
+        speedMult:run(l_getSpeedMult(), speedOnPart[2], 60, easing.linear)
         s_setStyle("astralDivinityDrop")
         shdr_setActiveFragmentShader(0, backgroundShaderDrop)
         setMainColor(225, 170, 245, 255)
@@ -259,8 +345,11 @@ function onLoad()
     e_waitUntilS(offset + 25.55);e_eval('applyToSymbol(2, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 60, easing.backIn) end)')
     e_waitUntilS(offset + 25.65);e_eval('applyToSymbol(1, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 60, easing.backIn) end)')
 
+    --------------------------------------------------------------------------
     -- Third Part
+    --------------------------------------------------------------------------
     e_waitUntilS(offset + 25.93);e_eval([[
+        speedMult:run(l_getSpeedMult(), speedOnPart[3], 60, easing.linear)
         s_setStyle("astralDivinityThirdPart")
         makePentagon()
         u_setFlashEffect(255)
@@ -312,9 +401,12 @@ function onLoad()
     ]]) 
     e_waitUntilS(offset + 44.85);e_eval([[applyToAllSymbols(function(cw) cw.y:run(cw.y.value, cw.y.value + math.random(-2000, 2000), 150, easing.backIn); cw.x:run(cw.x.value, cw.x.value + math.random(-3000, 3000), 100, easing.backIn) end)]])
 
+    --------------------------------------------------------------------------
     -- Fourth Part
+    --------------------------------------------------------------------------
     e_waitUntilS(offset + 45.47);e_eval([[
         s_setStyle("astralDivinityFourthPart")
+        speedMult:run(l_getSpeedMult(), speedOnPart[4], 60, easing.linear)
         removePentagonDecorations()
         removeRotatingCircles()
         shdr_setActiveFragmentShader(0, backgroundShaderFourthPart)
@@ -444,13 +536,16 @@ function onLoad()
     ]])
     e_waitUntilS(offset + 62.60);e_eval('applyToSymbol(2, function(cw) cw.y:run(cw.y.value, cw.y.value + 500, 75, easing.backIn) end)')
     
+    --------------------------------------------------------------------------
     -- Fifth Part
+    --------------------------------------------------------------------------
     e_waitUntilS(offset + 63);e_eval([[
         s_setStyle("astralDivinityFifthPart")
         removePentagonDecorations()
         deleteBasicWalls()
         removeRotatingCircles()
         deleteSymbols()
+        speedMult:run(l_getSpeedMult(), speedOnPart[5], 60, easing.linear)
         shdr_setActiveFragmentShader(0, backgroundShaderLastPart)
         u_setFlashEffect(255)
         setMainColor(245, 245, 245, 255)
@@ -492,7 +587,7 @@ function onLoad()
     ]])
     e_waitUntilS(offset + 81.69); e_eval([[
     ]])
-    e_waitUntilS(offset + 82.1); e_eval('speed:run(l_getSpeedMult(), 0 , 180)')
+    e_waitUntilS(offset + 82.1); e_eval('speedMult:run(l_getSpeedMult(), 0 , 180)')
     e_waitUntilS(offset + levelCompletionTime);e_eval([[
         cw_clear()
         shdr_resetActiveFragmentShader(2)
@@ -512,7 +607,7 @@ function onLoad()
             s_setStyle("astralDivinityEndWhite")
         end
         l_overrideScore('levelCompletedMsg')
-        local str = "\n\n\n\n\n\n\n\nDIFFICULTY: SANE"
+        local str = "\n\n\n\n\n\n\n\nDIFFICULTY: "..difficulty
         if deathFrames > 0 then
             str = str .. "\nACCURACY: " .. tostring(accuracy)
         end

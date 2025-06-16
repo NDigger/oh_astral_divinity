@@ -8,5 +8,5 @@
     "styleId": "astralDivinity",
     "musicId": "ratRiver",
     "luaFile": "Scripts/Levels/astralDivinity.lua",
-    "difficultyMults": []
+    "difficultyMults": [0.99, 1.01, 1.02, 1.03]
 }
