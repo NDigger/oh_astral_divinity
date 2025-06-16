@@ -420,7 +420,7 @@ globalTimings = {
         ]])
         end,
         function()
-            local timings = {64.25, 64.43, 64.51, 64.58, 64.72, 69.05, 69.15, 69.25, 73.04, 73.19, 73.34, 77.51, 77.65, 77.80}
+            local timings = {64.25, 64.43, 64.51, 64.58, 64.62, 68.95, 69.05, 69.15, 73.04, 73.19, 73.34, 77.51, 77.65, 77.80}
             createEvents(timings, [[
             scoreFloatingNumbers:run(4, 0, 60, easing.easeOut)
             l_setRotation(l_getRotation() + 360 / l_getSides())

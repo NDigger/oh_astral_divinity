@@ -327,6 +327,7 @@ function onLoad()
     e_waitUntilS(offset + 45.47);e_eval([[
         s_setStyle("astralDivinityFourthPart")
         removePentagonDecorations()
+        removeRotatingCircles()
         shdr_setActiveFragmentShader(0, backgroundShaderFourthPart)
         pulsingLineWalls(150, 0)
         deleteSymbols()
@@ -341,7 +342,7 @@ function onLoad()
         for i = 1, 50 do createRotatingCircle(4, 700, 300, math.random(0, 314)) end
         for i = 1, 20 do createRotatingCircle(1, 300, 50, i / 10, 3) end
         for i = 1, 20 do createRotatingCircle(1, 300, 50, i / 10 + math.pi, 3) end
-    ]])
+    ]]) -- for i = 1, 3 do createRotatingCircle(2, i * 66, i * 200, i, i, 60) end
     e_waitUntilS(offset + 47.87);e_eval([[
         createRotatingCircle(0.5, 0, 230, 0, 0, 40)
         pulsingLineWalls(1, 0, -730, 1000, 1000, 40)
