@@ -5,7 +5,6 @@ u_execScript("astralDivinityCustomWalls.lua")
 
 THICKNESS = 60 -- I find this fitting but it can be edited of course. I'd not recommend making it smaller than 40
 u_execScript("xxixstuff/levelConfig.lua")
-u_execScript("xxixstuff/levelDifficulties.lua")
 
 achievementUnlocked = false
 hardAchievementUnlocked = false
@@ -164,13 +163,18 @@ function onInit()
     l_setSpeedMult(speedOnPart[1])
     l_setSpeedInc(0)
     l_setSpeedMax(4.75)
-    l_setDelayMult(1.4)
 
     l_setRotationSpeed(0)
 
     l_setDelayInc(0)
     l_setFastSpin(0)
-    makeTriangle()
+
+    l_setSides(3)
+    l_setDelayMult(1.4)
+    keys = { 0, 1, 102, 301, 1004 }
+    shuffle(keys)
+    index = 1
+
     for i = 0, l_getSides() - 1 do playerWall(i) end
     createOtherPlayerWalls()
 
@@ -255,7 +259,7 @@ function onLoad()
         createSymbol(4, 0, 280)
         l_setSpeedMult(0)
         t_clear()
-        t_wait(calcHalfSidesDelay() * 1.75)
+        PATTERNS_ENABLED = 0
         u_setFlashColor(255, 255, 255)
     ]])
     e_waitUntilS(offset + 3.96);e_eval([[
@@ -270,7 +274,11 @@ function onLoad()
         applyToSymbol(4, function(cw) cw.x:run(cw.x.value - 200, cw.x.value, 25, easing.easeOut) end)
         applyToSymbol(5, function(cw) cw.x:run(cw.x.value + 200, cw.x.value, 25, easing.easeOut) end)
         l_setSpeedMult(speedOnPart[1])
+        PATTERNS_ENABLED = 1
+        t_clear()
+        ALLOW_PRE_DELAY = 0
     ]])
+    e_eval([[ALLOW_PRE_DELAY = 1]])
     e_waitUntilS(offset + 4.23);e_eval([[
         rotatePlayerWalls(math.ceil(customWall.player[1].rotation.value / math.pi / l_getSides()) * math.pi / l_getSides() - math.pi, 30, easing.easeOut)
     ]])
@@ -291,7 +299,15 @@ function onLoad()
         setCustomWallColorVariance(20, 0, 10, 0)
         u_setFlashEffect(255)
         applyMainColor()
-        makeHexagon()
+
+        l_setSides(6)
+        l_setDelayMult(1.4)
+        keys = { 0, 1, 11, 12, 100, 102, 200, 201, 300, 301, 302, 303, 1004 }
+        shuffle(keys)
+        index = 1
+
+        t_clear()
+        ALLOW_PRE_DELAY = 0
         createPentagonDecoration(42, 620, 340, redColor)
         createPentagonDecoration(40, 540, 342, redColor)
         createPentagonDecoration(38, 460, 344, redColor)
@@ -303,6 +319,7 @@ function onLoad()
         createPentagonDecoration(26, 16, 356, redColor)
         createPentagonDecoration(24, -53, 358, redColor)
     ]])
+    e_eval([[ALLOW_PRE_DELAY = 1]])
     -- Symbols 1
     e_waitUntilS(offset + 12.18);e_eval([[
         deleteSymbols()
@@ -351,7 +368,15 @@ function onLoad()
     e_waitUntilS(offset + 25.93);e_eval([[
         speedMult:run(l_getSpeedMult(), speedOnPart[3], 60, easing.linear)
         s_setStyle("astralDivinityThirdPart")
-        makePentagon()
+
+        l_setSides(5)
+        l_setDelayMult(1.4)
+        keys = { 0, 1, 11, 12, 100, 102, 200, 201, 300, 301, 302, 303, 1004 }
+        shuffle(keys)
+        index = 1
+
+        t_clear()
+        ALLOW_PRE_DELAY = 0
         u_setFlashEffect(255)
         shdr_resetActiveFragmentShader(0)
         setMainColor(195, 195, 240, 255)
@@ -361,6 +386,7 @@ function onLoad()
             createPentagonDecoration(170 + i % 2 * 55, math.sin(i/4) * 920, math.cos(i/4) * 660, mainColor, math.random(50, 150)/100) 
         end
     ]])
+    e_eval([[ALLOW_PRE_DELAY = 1]])
 
     e_waitUntilS(offset + 43.24);e_eval([[
         deleteSymbols()
@@ -414,7 +440,15 @@ function onLoad()
         deleteSymbols()
         s_setBGRotationOffset(0)
         u_setFlashEffect(255)
-        makeOctagon()
+
+        l_setSides(8)
+        l_setDelayMult(1.6)
+        keys = { 0, 1, 11, 12, 100, 102, 301, 1004 }
+        shuffle(keys)
+        index = 1
+
+        t_clear()
+        ALLOW_PRE_DELAY = 0
         setMainColor(225, 200, 205, 255)
         setCustomWallColorVariance(30, 10, 10, 0)
         skew:run(0, 0.2, 100, easing.backOut)
@@ -424,6 +458,7 @@ function onLoad()
         for i = 1, 20 do createRotatingCircle(1, 300, 50, i / 10, 3) end
         for i = 1, 20 do createRotatingCircle(1, 300, 50, i / 10 + math.pi, 3) end
     ]]) -- for i = 1, 3 do createRotatingCircle(2, i * 66, i * 200, i, i, 60) end
+    e_eval([[ALLOW_PRE_DELAY = 1]])
     e_waitUntilS(offset + 47.87);e_eval([[
         createRotatingCircle(0.5, 0, 230, 0, 0, 40)
         pulsingLineWalls(1, 0, -730, 1000, 1000, 40)
@@ -465,7 +500,14 @@ function onLoad()
         pulsingLineWalls(1, -120, -2200, 15, 15, 2500)
     ]])
     e_waitUntilS(offset + 54.25);e_eval([[
-        makeDecagon()
+        l_setSides(10)
+        l_setDelayMult(1.75)
+        keys = { 0, 1, 102, 102, 301 }
+        shuffle(keys)
+        index = 1
+
+        t_clear()
+        ALLOW_PRE_DELAY = 0
         u_setFlashEffect(255)
         deleteSymbols()
         createPentagonDecoration(11, -270, -270)
@@ -477,6 +519,7 @@ function onLoad()
             createPentagonDecoration(100, 750, i * 140 - 500, mainColor, math.pi)
         end
     ]])
+    e_eval([[ALLOW_PRE_DELAY = 1]])
     e_waitUntilS(offset + 56.6);e_eval([[
         createRotatingCircle(1.3, 0, 350, 0, 0, 40)
         pulsingLineWalls(1, 0, -680, 1000, 1000, 40)
@@ -551,7 +594,15 @@ function onLoad()
         setMainColor(245, 245, 245, 255)
         setCustomWallColorVariance(10, 10, 10, 0)
         applyMainColor()
-        makePentagon()
+
+        l_setSides(5)
+        l_setDelayMult(1.4)
+        keys = { 0, 1, 11, 12, 100, 102, 200, 201, 300, 301, 302, 303, 1004 }
+        shuffle(keys)
+        index = 1
+
+        t_clear()
+        ALLOW_PRE_DELAY = 0
         for i = 1, 6 do 
             createRotatingCircle(5, 250, 50, i/6*math.pi*2, 4, math.random(3, 10))
             fakePlayerArrow(250, i/6*math.pi*2, 4, 70, 0.2, 9)
@@ -577,7 +628,17 @@ function onLoad()
             fakePlayerArrow(850, i/21*math.pi*2, -0.5, 30, 0.12, 6) 
         end
     ]])
-    e_waitUntilS(offset + 63.01);e_eval('makeSquare()')
+    e_eval([[ALLOW_PRE_DELAY = 1]])
+    e_waitUntilS(offset + 63.01);
+    e_eval([[
+        l_setSides(4)
+        l_setDelayMult(1.4)
+        keys = { 102, 102, 300, 301 }
+        shuffle(keys)
+        index = 1
+
+        t_clear()
+    ]])
 
     -- END
     e_waitUntilS(offset + 80.09); e_eval([[
