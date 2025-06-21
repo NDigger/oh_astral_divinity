@@ -143,6 +143,10 @@ globalTimings = {
             createEvents(timings, [[
             l_setSides(l_getSides() + 1)
             t_clear()
+            ALLOW_PRE_DELAY = 0
+            ]])
+            createEvents(timings, [[
+            ALLOW_PRE_DELAY = 1
             ]])
             local delayedTimings = {1.47, 5.86, 8.05} -- fixes player pulse
             createEvents(delayedTimings, [[
